@@ -1,0 +1,72 @@
+public static ArrayList<String> shortestChain(Graph g, String p1, String p2) 
+	{
+		ArrayList<String> shortest = new ArrayList<String>();
+		ArrayList<String> check = new ArrayList<String>();
+		int smallest = 0;
+		ArrayList<ArrayList<String>> paths = new ArrayList<ArrayList<String>>();
+		int i = g.map.get(p1);
+		int j = g.map.get(p2);
+		Person start = g.members[i];
+		Person end = g.members[j];
+		System.out.println(start.name);
+		System.out.println(end.name);
+		check.add(p1);
+		followPath(start,end,check,paths,g);
+		
+		for(int k = 0; k < paths.size(); k++)
+		{
+			if (k == 0)
+			{
+				smallest = paths.get(k).size();
+				shortest = paths.get(k);
+			}
+			else
+			{
+				if (paths.get(k).size() < smallest)
+				{
+					smallest = paths.get(k).size();
+					shortest = paths.get(k);
+				}
+			}
+		}
+		return shortest;
+	}
+	
+	private static void followPath(Person start, Person end, ArrayList<String> check, ArrayList<ArrayList<String>> paths, Graph g)
+	{
+		Friend ptr = start.first;
+		Stack<Integer> combos = checkPaths(ptr);
+		while(!combos.isEmpty())
+		{
+			ArrayList<String> course = check;
+			Person nextPerson = g.members[combos.pop()];
+			if (!course.contains(nextPerson.name))
+			{
+				course.add(nextPerson.name);
+				if (course.contains(end))
+				{
+					paths.add(course);
+					System.out.println(course);
+				}
+				else
+				{
+					System.out.println(course);
+					followPath(nextPerson,end,course,paths,g);
+				}
+			}
+		}
+	}
+	
+	private static Stack<Integer> checkPaths(Friend ptr)
+	{
+		Stack<Integer> combos = new Stack<Integer>();
+		while(ptr.next != null)
+		{
+			System.out.println(ptr.fnum);
+			ptr = ptr.next;
+			combos.push(ptr.fnum);
+		}
+		System.out.println(ptr.fnum);
+		combos.push(ptr.fnum);
+		return combos;
+	}
